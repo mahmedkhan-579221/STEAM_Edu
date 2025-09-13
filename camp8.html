@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>STEAM TEAM TRACKER</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="shortcut icon" href="idara logo.png" type="image/x-icon">
+  <style>
+    :root {
+      --primary-dark: #1A144C;
+      --primary-accent: #01B7C5;
+      --neutral-gray: #7A7D7D;
+      --pure-white: #FFFFFF;
+      --light-bg: #F8FAFC;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--light-bg);
+      margin: 0;
+      padding: 0;
+      color: var(--primary-dark);
+      line-height: 1.6;
+    }
+
+    /* ---------------- NAVBAR ---------------- */
+    .navbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: var(--primary-dark);
+      padding: 12px 30px;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .navbar img {
+      height: 42px;
+      background: var(--pure-white);
+      padding: 4px 6px;
+      border-radius: 6px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 25px;
+    }
+
+    .nav-links a {
+      color: var(--pure-white);
+      text-decoration: none;
+      font-size: 16px;
+      font-weight: 500;
+      padding: 8px 16px;
+      border-radius: 6px;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-links a:hover {
+      background: rgba(255, 255, 255, 0.15);
+      transform: translateY(-2px);
+    }
+
+    .menu-toggle {
+      display: none;
+      font-size: 24px;
+      color: white;
+      cursor: pointer;
+      padding: 8px;
+    }
+
+    @media (max-width: 768px) {
+      .navbar {
+        padding: 12px 20px;
+      }
+
+      .nav-links {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+        background: var(--primary-dark);
+        position: absolute;
+        top: 66px;
+        left: 0;
+        padding: 15px 0;
+      }
+
+      .nav-links.show {
+        display: flex;
+      }
+
+      .menu-toggle {
+        display: block;
+      }
+    }
+
+    /* ---------------- SUB NAVBAR ---------------- */
+    .sub-navbar {
+      background: var(--primary-accent);
+      padding: 8px 20px;
+      display: flex;
+      justify-content: center;
+      gap: 25px;
+      flex-wrap: wrap;
+    }
+
+    .sub-navbar a {
+      color: var(--pure-white);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      padding: 6px 14px;
+      border-radius: 6px;
+      transition: all 0.3s ease;
+    }
+
+    .sub-navbar a:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateY(-2px);
+    }
+
+    /* ---------------- PAGE CONTENT ---------------- */
+    .container {
+      padding: 30px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .dashboard-header {
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 28px;
+      font-weight: 700;
+    }
+
+    /* ---------------- TABS ---------------- */
+    .tabs {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 25px;
+      flex-wrap: wrap;
+    }
+
+    .tab-btn {
+      background: var(--pure-white);
+      border: 1px solid var(--primary-accent);
+      color: var(--primary-dark);
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .tab-btn.active,
+    .tab-btn:hover {
+      background: var(--primary-accent);
+      color: var(--pure-white);
+    }
+
+    /* Data Table */
+    .table-container {
+      background: var(--pure-white);
+      border-radius: 10px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+    }
+
+    #data-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    #data-table th,
+    #data-table td {
+      padding: 16px 20px;
+      text-align: left;
+    }
+
+    #data-table th {
+      background-color: var(--primary-dark);
+      color: var(--pure-white);
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 13px;
+    }
+
+    #data-table tr:nth-child(even) {
+      background-color: rgba(1, 183, 197, 0.05);
+    }
+
+    #data-table tr:hover {
+      background-color: rgba(1, 183, 197, 0.1);
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: capitalize;
+    }
+
+    .status-pending {
+      background-color: rgba(255, 193, 7, 0.15);
+      color: #d39e00;
+    }
+
+    .status-completed {
+      background-color: rgba(40, 167, 69, 0.15);
+      color: #28A745;
+    }
+
+    .status-approved {
+      background-color: rgba(1, 183, 197, 0.15);
+      color: var(--primary-accent);
+    }
+
+    .status-rejected {
+      background-color: rgba(220, 53, 69, 0.15);
+      color: #dc3545;
+    }
+
+    @media (max-width: 768px) {
+      .table-container {
+        overflow-x: auto;
+      }
+
+      #data-table {
+        min-width: 700px;
+      }
+    }
+
+    /* Loading */
+    #loading {
+      text-align: center;
+      padding: 40px;
+      color: var(--neutral-gray);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .loading-spinner {
+      border: 4px solid rgba(1, 183, 197, 0.2);
+      border-top: 4px solid var(--primary-accent);
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* Empty */
+    .empty-state {
+      text-align: center;
+      padding: 50px 20px;
+      color: var(--neutral-gray);
+    }
+
+    .empty-state i {
+      font-size: 48px;
+      margin-bottom: 15px;
+      color: rgba(122, 125, 125, 0.3);
+    }
+  </style>
+</head>
+
+<body>
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <img src="./idara logo.png" alt="Logo">
+    <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+    <div class="nav-links" id="navLinks">
+      <a href="./index.html">Task Dashboard</a>
+      <a href="./curriculum.html">STEAM Curriculum</a>
+      <a href="./Inventory.html">Robotics Inventory</a>
+    </div>
+  </nav>
+
+  <!-- SUB NAVBAR -->
+  <div class="sub-navbar">
+    <a href="./Inventory.html">Campus 1</a>
+    <a href="./camp4.html">Campus 4</a>
+    <a href="./camp6.html">Campus 6</a>
+    <a href="./camp8.html">Campus 8</a>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="container">
+    <div class="dashboard-header">
+      <h1>Campus 8 Invertory</h1>
+      <h2>In process... Coming Soon! </h2>
+    </div>
+
+    <div class="table-container">
+      <div id="loading">
+        <div class="loading-spinner"></div>
+        <div>Loading task data...</div>
+      </div>
+      <table id="data-table"></table>
+    </div>
+  </div>
+
+  <footer style="padding:14px;text-align:center;background:#1A144C;color:#e5e7eb;font-size:14px;">
+    Developed by <strong>STEAM Team</strong>.
+  </footer>
+
+  <script>
+    function toggleMenu() {
+      document.getElementById("navLinks")?.classList.toggle("show");
+    }
+
+    const API_KEY = "AIzaSyAiEhYfZwzhH2aq9D0rS-OPFsWONiJdFho";
+    const SHEET_ID = "";
+    const RANGE = "Sheet1";
+
+    let headers = [];
+    let rows = [];
+    let categoryIndex = -1;
+
+    const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${RANGE}?key=${API_KEY}`;
+
+    fetch(url)
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById('loading').style.display = 'none';
+        if (!data.values || data.values.length < 2) { showEmptyState(); return; }
+
+        headers = data.values[0];
+        rows = data.values.slice(1);
+
+        categoryIndex = headers.findIndex(h => h.toLowerCase() === "category");
+
+        renderTable(headers, rows);
+      })
+      .catch(() => {
+        document.getElementById('loading').innerHTML = `
+          <i class="fas fa-exclamation-triangle" style="font-size: 24px; color: #dc3545;"></i>
+          <div>Error loading data.</div>`;
+      });
+
+    function renderTable(headers, rowsToDisplay) {
+      const table = document.getElementById('data-table');
+      if (rowsToDisplay.length === 0) { showEmptyState(); return; }
+
+      let tableHTML = "<thead><tr>";
+      headers.forEach(header => { tableHTML += `<th>${header}</th>`; });
+      tableHTML += "</tr></thead><tbody>";
+
+      const statusIndex = headers.findIndex(h => h.toLowerCase() === "status");
+
+      rowsToDisplay.forEach(row => {
+        tableHTML += "<tr>";
+        headers.forEach((header, index) => {
+          if (index === statusIndex) {
+            const status = (row[index] || "").toLowerCase();
+            let statusClass = "status-pending";
+            if (status === "completed") statusClass = "status-completed";
+            else if (status === "approved") statusClass = "status-approved";
+            else if (status === "rejected") statusClass = "status-rejected";
+            tableHTML += `<td><span class="status-badge ${statusClass}">${status}</span></td>`;
+          } else {
+            tableHTML += `<td>${row[index] || ""}</td>`;
+          }
+        });
+        tableHTML += "</tr>";
+      });
+
+      tableHTML += "</tbody>";
+      table.innerHTML = tableHTML;
+    }
+
+    function filterCategory(category) {
+      document.querySelectorAll(".tab-btn").forEach(btn => btn.classList.remove("active"));
+      event.target.classList.add("active");
+
+      if (categoryIndex === -1) { renderTable(headers, rows); return; }
+
+      const filteredRows = rows.filter(r => (r[categoryIndex] || "").includes(category));
+      renderTable(headers, filteredRows);
+    }
+
+    function showEmptyState() {
+      document.querySelector('.table-container').innerHTML = `
+        <div class="empty-state">
+          <i class="fas fa-clipboard-list"></i>
+          <h3>No tasks found</h3>
+          <p>Try again later</p>
+        </div>`;
+    }
+  </script>
+</body>
+
+</html>
